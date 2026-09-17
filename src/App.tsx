@@ -3,6 +3,7 @@ import {
   compareCropPrices, crops, filterPriceRecords, markets, SAMPLE_DATA_LABEL,
   SAMPLE_DATE, samplePriceRecords, type CropCategory, type CropId, type Market,
 } from './data/prices'
+import ReportPrice from './ReportPrice'
 import './App.css'
 
 type Page = 'prices' | 'compare' | 'report'
@@ -18,7 +19,6 @@ function App() {
   const [category, setCategory] = useState<CropCategory | 'all'>('all')
   const [compareCrop, setCompareCrop] = useState<CropId>('tomato')
   const [quantityInput, setQuantityInput] = useState('1')
-  const [reportSubmitted, setReportSubmitted] = useState(false)
 
   const records = filterPriceRecords(samplePriceRecords, {
     search,
@@ -179,20 +179,7 @@ function App() {
           </section>
         )}
 
-        {page === 'report' && (
-          <section className="secondary-page" aria-labelledby="report-heading">
-            <p className="eyebrow">COMMUNITY INPUT</p>
-            <h1 id="report-heading">Report a price</h1>
-            <p>This demo stores no reports. Use the form to preview the reporting flow.</p>
-            {reportSubmitted ? <div className="sample-banner" role="status">Demo report noted on this screen only. No price was submitted or saved.</div> : null}
-            <form className="report-form" onSubmit={(event) => { event.preventDefault(); setReportSubmitted(true) }}>
-              <label>Crop<select required defaultValue=""><option value="" disabled>Select a crop</option>{crops.map((crop) => <option key={crop.id} value={crop.id}>{crop.name}</option>)}</select></label>
-              <label>Market<select required defaultValue=""><option value="" disabled>Select a market</option>{markets.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
-              <label>Price (LKR per kg)<input required type="number" min="1" step="0.01" placeholder="e.g. 250" /></label>
-              <button type="submit">Preview report</button>
-            </form>
-          </section>
-        )}
+        {page === 'report' && <ReportPrice />}
       </main>
       <footer>AgriPriceSL · All displayed prices are illustrative sample data.</footer>
     </div>
