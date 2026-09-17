@@ -1,0 +1,19 @@
+main { width: min(100% - 2rem, 1000px); margin: 0 auto; padding: 3rem 0 5rem; }
+header { margin-bottom: 3rem; }
+.eyebrow { color: #287443; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+h1 { margin: .5rem 0; font-size: clamp(2.2rem, 5vw, 4rem); }
+h2 { margin-bottom: .8rem; }
+.notice { display: inline-block; margin-top: 1.5rem; padding: .8rem 1rem; background: #e8f4e9; border-left: 4px solid #287443; font-weight: 600; }
+section { margin-top: 2.5rem; }
+.filters { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.4rem 0; }
+label { display: grid; gap: .4rem; font-weight: 600; }
+select { min-width: 200px; padding: .65rem; border: 1px solid #a4b5a7; border-radius: 6px; background: white; font: inherit; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: white; }
+caption { text-align: left; padding: .6rem 0; font-size: .85rem; }
+th, td { padding: .85rem; border-bottom: 1px solid #dce5dc; text-align: left; white-space: nowrap; }
+th { background: #e8f4e9; }
+.section-note { color: #45584a; }
+.comparison { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.price-card { display: grid; gap: .5rem; padding: 1.2rem; border: 1px solid #dce5dc; border-radius: 10px; background: white; }
+.price-card strong { font-size: 1.5rem; }
