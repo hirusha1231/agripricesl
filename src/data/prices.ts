@@ -48,6 +48,7 @@ export const samplePriceRecords: PriceRecord[] = crops.flatMap((crop) =>
 )
 
 export interface PriceFilters {
+  search?: string
   cropId?: CropId
   category?: CropCategory
   market?: Market
@@ -56,6 +57,7 @@ export interface PriceFilters {
 
 export function filterPriceRecords(records: readonly PriceRecord[], filters: PriceFilters): PriceRecord[] {
   return records.filter((record) =>
+    (filters.search === undefined || record.name.toLocaleLowerCase().includes(filters.search.trim().toLocaleLowerCase())) &&
     (filters.cropId === undefined || record.cropId === filters.cropId) &&
     (filters.category === undefined || record.category === filters.category) &&
     (filters.market === undefined || record.market === filters.market) &&
