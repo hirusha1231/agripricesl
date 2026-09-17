@@ -181,7 +181,7 @@ function App() {
 
         {page === 'report' && <ReportPrice />}
       </main>
-      <footer>AgriPriceSL · All displayed prices are illustrative sample data.</footer>
+      <footer>AgriPriceSL · {page === 'report' ? 'Your reports are saved only in this browser.' : 'Prices shown here are illustrative sample data, not live prices.'}</footer>
     </div>
   )
 }

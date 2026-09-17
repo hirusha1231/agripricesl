@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { crops, markets, type CropId, type Market } from './data/prices'
 
 const STORAGE_KEY = 'agripricesl-price-reports-v1'
@@ -28,7 +28,8 @@ function localToday(): string {
 function validCalendarDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
   const [year, month, day] = value.split('-').map(Number)
-  const parsed = new Date(Date.UTC(year, month - 1, day))
+  const parsed = new Date(0)
+  parsed.setUTCFullYear(year, month - 1, day)
   return parsed.getUTCFullYear() === year && parsed.getUTCMonth() + 1 === month && parsed.getUTCDate() === day
 }
 
@@ -70,6 +71,10 @@ function validate(values: FormValues): Errors {
 }
 
 function ReportPrice() {
+  const cropRef = useRef<HTMLSelectElement>(null)
+  const marketRef = useRef<HTMLSelectElement>(null)
+  const priceRef = useRef<HTMLInputElement>(null)
+  const dateRef = useRef<HTMLInputElement>(null)
   const [initial] = useState(readReports)
   const [reports, setReports] = useState(initial.reports)
   const [values, setValues] = useState<FormValues>({ cropId: '', market: '', price: '', date: localToday(), note: '' })
@@ -88,7 +93,13 @@ function ReportPrice() {
     const nextErrors = validate(values)
     setErrors(nextErrors)
     setStatus('')
-    if (Object.keys(nextErrors).length > 0) return
+    if (Object.keys(nextErrors).length > 0) {
+      if (nextErrors.cropId) cropRef.current?.focus()
+      else if (nextErrors.market) marketRef.current?.focus()
+      else if (nextErrors.price) priceRef.current?.focus()
+      else if (nextErrors.date) dateRef.current?.focus()
+      return
+    }
 
     const report: SavedReport = {
       id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
@@ -131,23 +142,23 @@ function ReportPrice() {
     {status && <p className="report-status" role="status">{status}</p>}
     <form className="report-form" onSubmit={save} noValidate>
       <label>Crop
-        <select value={values.cropId} onChange={(event) => update('cropId', event.target.value)} aria-invalid={!!errors.cropId} aria-describedby={errors.cropId ? 'crop-error' : undefined}>
+        <select ref={cropRef} value={values.cropId} onChange={(event) => update('cropId', event.target.value)} aria-invalid={!!errors.cropId} aria-describedby={errors.cropId ? 'crop-error' : undefined}>
           <option value="">Select a crop</option>{crops.map((crop) => <option key={crop.id} value={crop.id}>{crop.name}</option>)}
         </select>
         {errors.cropId && <span className="form-error" id="crop-error">{errors.cropId}</span>}
       </label>
       <label>Market
-        <select value={values.market} onChange={(event) => update('market', event.target.value)} aria-invalid={!!errors.market} aria-describedby={errors.market ? 'market-error' : undefined}>
+        <select ref={marketRef} value={values.market} onChange={(event) => update('market', event.target.value)} aria-invalid={!!errors.market} aria-describedby={errors.market ? 'market-error' : undefined}>
           <option value="">Select a market</option>{markets.map((market) => <option key={market} value={market}>{market}</option>)}
         </select>
         {errors.market && <span className="form-error" id="market-error">{errors.market}</span>}
       </label>
       <label>Price (LKR per kg)
-        <input type="number" min="0" step="any" inputMode="decimal" value={values.price} onChange={(event) => update('price', event.target.value)} placeholder="e.g. 250" aria-invalid={!!errors.price} aria-describedby={errors.price ? 'price-error' : undefined} />
+        <input ref={priceRef} type="number" min="0" step="any" inputMode="decimal" value={values.price} onChange={(event) => update('price', event.target.value)} placeholder="e.g. 250" aria-invalid={!!errors.price} aria-describedby={errors.price ? 'price-error' : undefined} />
         {errors.price && <span className="form-error" id="price-error">{errors.price}</span>}
       </label>
       <label>Date observed
-        <input type="date" max={localToday()} value={values.date} onChange={(event) => update('date', event.target.value)} aria-invalid={!!errors.date} aria-describedby={errors.date ? 'date-error' : undefined} />
+        <input ref={dateRef} type="date" max={localToday()} value={values.date} onChange={(event) => update('date', event.target.value)} aria-invalid={!!errors.date} aria-describedby={errors.date ? 'date-error' : undefined} />
         {errors.date && <span className="form-error" id="date-error">{errors.date}</span>}
       </label>
       <label>Note <span className="optional-label">(optional)</span>
